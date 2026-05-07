@@ -7,4 +7,4 @@ ENV OTEL_RESOURCE_ATTRIBUTES=host.name=signoz-host,os.type=linux
 
 EXPOSE 4317 4318 13133 1777
 
-ENTRYPOINT ["/bin/sh", "-c", "/signoz-otel-collector migrate sync check && exec /signoz-otel-collector --config=/etc/otel-collector-config.yaml"]
+ENTRYPOINT ["/bin/sh", "-c", "/signoz-otel-collector migrate sync up --clickhouse-dsn=tcp://${CLICKHOUSE_HOST}:9000 --clickhouse-replication=false && exec /signoz-otel-collector --config=/etc/otel-collector-config.yaml"]
