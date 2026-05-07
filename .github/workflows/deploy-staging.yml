@@ -108,8 +108,16 @@ jobs:
             '{
               SIGNOZ_INGEST_TOKEN: $ingest,
               CLICKHOUSE_HOST: "clickhouse.railway.internal",
-              LOW_CARDINAL_EXCEPTION_GROUPING: "false"
+              LOW_CARDINAL_EXCEPTION_GROUPING: "false",
+              PORT: "4318"
             }')
+          # PORT=4318 tells Railway to route the public custom-domain HTTPS
+          # to the OTLP HTTP receiver (port 4318) instead of the default
+          # first-EXPOSE port (4317, gRPC). gRPC isn't reachable through
+          # Railway's HTTPS edge so external OTLP/HTTP clients (e.g. direct
+          # OTLP from a browser SDK or external service) need port 4318.
+          # Internal *.railway.internal traffic to either port works
+          # regardless because internal DNS doesn't go through the edge.
 
           VARS_GQL=$(echo "$ENVVARS" | jq -r '
             to_entries | map(
